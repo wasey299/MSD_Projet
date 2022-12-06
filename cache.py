@@ -77,14 +77,43 @@ for trace_line in Trace_line_list_2d:
         if trace_line[2] == cache_line[0]:
             if trace_line[1] == cache_line[1]:
                 if arg == "N":
-                    print("Hit")
+                    print("Hit: Index = %d | Tag = %d" %(trace_line[2], trace_line[1]))
                 break
-            elif trace_line[1] != cache_line[1]:
+            if trace_line[1] == cache_line[2]:
                 if arg == "N":
-                    print("Miss")
+                    print("Hit: Index = %d | Tag = %d" %(trace_line[2], trace_line[1]))
+                break
+            if trace_line[1] == cache_line[3]:
+                if arg == "N":
+                    print("Hit: Index = %d | Tag = %d" %(trace_line[2], trace_line[1]))
+                break
+            if trace_line[1] == cache_line[4]:
+                if arg == "N":
+                    print("Hit: Index = %d | Tag = %d" %(trace_line[2], trace_line[1]))
+                break
+            if trace_line[1] == cache_line[5]:
+                if arg == "N":
+                    print("Hit: Index = %d | Tag = %d" %(trace_line[2], trace_line[1]))
+                break
+            if trace_line[1] == cache_line[6]:
+                if arg == "N":
+                    print("Hit: Index = %d | Tag = %d" %(trace_line[2], trace_line[1]))
+                break
+            if trace_line[1] == cache_line[7]:
+                if arg == "N":
+                    print("Hit: Index = %d | Tag = %d" %(trace_line[2], trace_line[1]))
+                break
+            if trace_line[1] == cache_line[8]:
+                if arg == "N":
+                    print("Hit: Index = %d | Tag = %d" %(trace_line[2], trace_line[1]))
+                break
+            elif trace_line[1] != cache_line[8]:
+                if arg == "N":
+                    print("Miss: Index = %d | Tag = %d" %(trace_line[2], trace_line[1]))
                 cache_line[1] = trace_line[1]
                 break
 
 
 if arg == "N":
-    print(Cache_structure[3125])
+    print(Cache_structure[609])
+
