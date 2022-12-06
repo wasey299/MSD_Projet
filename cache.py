@@ -63,8 +63,28 @@ for i in range(len(Trace_line_list)):
     Tag_hex = hex(int(Tag_bin, 2))[2:]
     Trace_line_list_2d.append([n_bit, Tag, Index, Offset])
     Trace_line_list_2d_hex.append([n_bit, Tag_hex, Index_hex, Offset_hex])
-    Trace_line_dict_2d = {"Command": n_bit, "Tag": Tag, "Index": Index, "Offset": Offset}
-    Trace_line_dict_list.append(Trace_line_dict_2d)
+
+
+# Cache Structure
+
+for index_count in range(len(Sets_list)):
+    #Cache_structure.append([index_count, "LRU", "Way1", "Way2", "Way3", "Way4", "Way5", "Way6", "Way7", "Way8"])
+    Cache_structure.append([index_count, 0])
+
+
+for trace_line in Trace_line_list_2d:
+    for cache_line in Cache_structure:
+        if trace_line[2] == cache_line[0]:
+            if trace_line[1] == cache_line[1]:
+                if arg == "N":
+                    print("Hit")
+                break
+            elif trace_line[1] != cache_line[1]:
+                if arg == "N":
+                    print("Miss")
+                cache_line[1] = trace_line[1]
+                break
+
 
 if arg == "N":
-    print(Trace_line_dict_list)
+    print(Cache_structure[3125])
