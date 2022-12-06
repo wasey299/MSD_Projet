@@ -75,43 +75,215 @@ for index_count in range(len(Sets_list)):
 for trace_line in Trace_line_list_2d:
     for cache_line in Cache_structure:
         if trace_line[2] == cache_line[0]:
-            if trace_line[1] == cache_line[1]:
-                if arg == "N":
-                    print("Hit: Index = %d | Tag = %d" %(trace_line[2], trace_line[1]))
-                break
-            if trace_line[1] == cache_line[2]:
-                if arg == "N":
-                    print("Hit: Index = %d | Tag = %d" %(trace_line[2], trace_line[1]))
-                break
-            if trace_line[1] == cache_line[3]:
-                if arg == "N":
-                    print("Hit: Index = %d | Tag = %d" %(trace_line[2], trace_line[1]))
-                break
-            if trace_line[1] == cache_line[4]:
-                if arg == "N":
-                    print("Hit: Index = %d | Tag = %d" %(trace_line[2], trace_line[1]))
-                break
-            if trace_line[1] == cache_line[5]:
-                if arg == "N":
-                    print("Hit: Index = %d | Tag = %d" %(trace_line[2], trace_line[1]))
-                break
-            if trace_line[1] == cache_line[6]:
-                if arg == "N":
-                    print("Hit: Index = %d | Tag = %d" %(trace_line[2], trace_line[1]))
-                break
-            if trace_line[1] == cache_line[7]:
-                if arg == "N":
-                    print("Hit: Index = %d | Tag = %d" %(trace_line[2], trace_line[1]))
-                break
-            if trace_line[1] == cache_line[8]:
-                if arg == "N":
-                    print("Hit: Index = %d | Tag = %d" %(trace_line[2], trace_line[1]))
-                break
-            elif trace_line[1] != cache_line[8]:
-                if arg == "N":
-                    print("Miss: Index = %d | Tag = %d" %(trace_line[2], trace_line[1]))
-                cache_line[1] = trace_line[1]
-                break
+            if trace_line[0] == 0:
+                    if trace_line[1] == cache_line[2]:
+                        if cache_line[1] == "I":
+                            cache_line[1] = "E"
+                        elif cache_line[1] == "S":
+                            cache_line[1] == "S"
+                        elif cache_line[1] == "E":
+                            cache_line[1] == "E"
+                        elif cache_line[1] == "M":
+                            cache_line[1] == "M"
+                        if arg == "N":
+                            print("Hit: Index = %d | Tag = %d | MESI State = %s" %(trace_line[2], trace_line[1], cache_line[1]))
+                        break
+
+                    if trace_line[1] == cache_line[4]:
+                        if cache_line[3] == "I":
+                            cache_line[3] = "E"
+                        elif cache_line[3] == "S":
+                            cache_line[3] == "S"
+                        elif cache_line[3] == "E":
+                            cache_line[3] == "E"
+                        elif cache_line[3] == "M":
+                            cache_line[3] == "M"
+                        if arg == "N":
+                            print("Hit: Index = %d | Tag = %d | MESI State = %s" %(trace_line[2], trace_line[1], cache_line[3]))
+                        break
+
+                    if trace_line[1] == cache_line[6]:
+                        if cache_line[5] == "I":
+                            cache_line[5] = "E"
+                        elif cache_line[5] == "S":
+                            cache_line[5] == "S"
+                        elif cache_line[5] == "E":
+                            cache_line[5] == "E"
+                        elif cache_line[5] == "M":
+                            cache_line[5] == "M"
+                        if arg == "N":
+                            print("Hit: Index = %d | Tag = %d | MESI State = %s" %(trace_line[2], trace_line[1], cache_line[5]))
+                        break
+
+                    if trace_line[1] == cache_line[8]:
+                        if cache_line[7] == "I":
+                            cache_line[7] = "E"
+                        elif cache_line[7] == "S":
+                            cache_line[7] == "S"
+                        elif cache_line[7] == "E":
+                            cache_line[7] == "E"
+                        elif cache_line[7] == "M":
+                            cache_line[7] == "M"
+                        if arg == "N":
+                            print("Hit: Index = %d | Tag = %d | MESI State = %s" %(trace_line[2], trace_line[1], cache_line[7]))
+                        break
+
+                    if trace_line[1] == cache_line[10]:
+                        if cache_line[9] == "I":
+                            cache_line[9] = "E"
+                        elif cache_line[9] == "S":
+                            cache_line[9] == "S"
+                        elif cache_line[9] == "E":
+                            cache_line[9] == "E"
+                        elif cache_line[9] == "M":
+                            cache_line[9] == "M"
+                        if arg == "N":
+                            print("Hit: Index = %d | Tag = %d | MESI State = %s" %(trace_line[2], trace_line[1], cache_line[9]))
+                        break
+
+                    if trace_line[1] == cache_line[12]:
+                        if cache_line[11] == "I":
+                            cache_line[11] = "E"
+                        elif cache_line[11] == "S":
+                            cache_line[11] == "S"
+                        elif cache_line[11] == "E":
+                            cache_line[11] == "E"
+                        elif cache_line[11] == "M":
+                            cache_line[11] == "M"
+                        if arg == "N":
+                            print("Hit: Index = %d | Tag = %d | MESI State = %s" %(trace_line[2], trace_line[1], cache_line[11]))
+                        break
+
+                    if trace_line[1] == cache_line[14]:
+                        if cache_line[13] == "I":
+                            cache_line[13] = "E"
+                        elif cache_line[13] == "S":
+                            cache_line[13] == "S"
+                        elif cache_line[13] == "E":
+                            cache_line[13] == "E"
+                        elif cache_line[13] == "M":
+                            cache_line[13] == "M"
+                        if arg == "N":
+                            print("Hit: Index = %d | Tag = %d | MESI State = %s" %(trace_line[2], trace_line[1], cache_line[13]))
+                        break
+
+                    if trace_line[1] == cache_line[16]:
+                        if cache_line[15] == "I":
+                            cache_line[15] = "E"
+                        elif cache_line[15] == "S":
+                            cache_line[15] == "S"
+                        elif cache_line[15] == "E":
+                            cache_line[15] == "E"
+                        elif cache_line[15] == "M":
+                            cache_line[15] == "M"
+                        if arg == "N":
+                            print("Hit: Index = %d | Tag = %d | MESI State = %s" %(trace_line[2], trace_line[1], cache_line[15]))
+                        break
+
+            if trace_line[0] == 1:
+                    if trace_line[1] == cache_line[2]:
+                        if cache_line[1] == "I":
+                            cache_line[1] = "E"
+                        elif cache_line[1] == "S":
+                            cache_line[1] == "S"
+                        elif cache_line[1] == "E":
+                            cache_line[1] == "E"
+                        elif cache_line[1] == "M":
+                            cache_line[1] == "M"
+                        if arg == "N":
+                            print("Hit: Index = %d | Tag = %d | MESI State = %s" %(trace_line[2], trace_line[1], cache_line[1]))
+                        break
+
+                    if trace_line[1] == cache_line[4]:
+                        if cache_line[3] == "I":
+                            cache_line[3] = "E"
+                        elif cache_line[3] == "S":
+                            cache_line[3] == "S"
+                        elif cache_line[3] == "E":
+                            cache_line[3] == "E"
+                        elif cache_line[3] == "M":
+                            cache_line[3] == "M"
+                        if arg == "N":
+                            print("Hit: Index = %d | Tag = %d | MESI State = %s" %(trace_line[2], trace_line[1], cache_line[3]))
+                        break
+
+                    if trace_line[1] == cache_line[6]:
+                        if cache_line[5] == "I":
+                            cache_line[5] = "E"
+                        elif cache_line[5] == "S":
+                            cache_line[5] == "S"
+                        elif cache_line[5] == "E":
+                            cache_line[5] == "E"
+                        elif cache_line[5] == "M":
+                            cache_line[5] == "M"
+                        if arg == "N":
+                            print("Hit: Index = %d | Tag = %d | MESI State = %s" %(trace_line[2], trace_line[1], cache_line[5]))
+                        break
+
+                    if trace_line[1] == cache_line[8]:
+                        if cache_line[7] == "I":
+                            cache_line[7] = "E"
+                        elif cache_line[7] == "S":
+                            cache_line[7] == "S"
+                        elif cache_line[7] == "E":
+                            cache_line[7] == "E"
+                        elif cache_line[7] == "M":
+                            cache_line[7] == "M"
+                        if arg == "N":
+                            print("Hit: Index = %d | Tag = %d | MESI State = %s" %(trace_line[2], trace_line[1], cache_line[7]))
+                        break
+
+                    if trace_line[1] == cache_line[10]:
+                        if cache_line[9] == "I":
+                            cache_line[9] = "E"
+                        elif cache_line[9] == "S":
+                            cache_line[9] == "S"
+                        elif cache_line[9] == "E":
+                            cache_line[9] == "E"
+                        elif cache_line[9] == "M":
+                            cache_line[9] == "M"
+                        if arg == "N":
+                            print("Hit: Index = %d | Tag = %d | MESI State = %s" %(trace_line[2], trace_line[1], cache_line[9]))
+                        break
+
+                    if trace_line[1] == cache_line[12]:
+                        if cache_line[11] == "I":
+                            cache_line[11] = "E"
+                        elif cache_line[11] == "S":
+                            cache_line[11] == "S"
+                        elif cache_line[11] == "E":
+                            cache_line[11] == "E"
+                        elif cache_line[11] == "M":
+                            cache_line[11] == "M"
+                        if arg == "N":
+                            print("Hit: Index = %d | Tag = %d | MESI State = %s" %(trace_line[2], trace_line[1], cache_line[11]))
+                        break
+
+                    if trace_line[1] == cache_line[14]:
+                        if cache_line[13] == "I":
+                            cache_line[13] = "E"
+                        elif cache_line[13] == "S":
+                            cache_line[13] == "S"
+                        elif cache_line[13] == "E":
+                            cache_line[13] == "E"
+                        elif cache_line[13] == "M":
+                            cache_line[13] == "M"
+                        if arg == "N":
+                            print("Hit: Index = %d | Tag = %d | MESI State = %s" %(trace_line[2], trace_line[1], cache_line[13]))
+                        break
+
+                    if trace_line[1] == cache_line[16]:
+                        if cache_line[15] == "I":
+                            cache_line[15] = "E"
+                        elif cache_line[15] == "S":
+                            cache_line[15] == "S"
+                        elif cache_line[15] == "E":
+                            cache_line[15] == "E"
+                        elif cache_line[15] == "M":
+                            cache_line[15] == "M"
+                        if arg == "N":
+                            print("Hit: Index = %d | Tag = %d | MESI State = %s" %(trace_line[2], trace_line[1], cache_line[15]))
+                        break
 
 
 if arg == "N":
