@@ -19,10 +19,22 @@ arg = sys.argv[2]
 # Initialization of the list variables
 Trace_line_list = list()
 Trace_line_list_2d = list()
+Trace_line_dict_2d = dict()
 Trace_line_list_2d_hex = list()
+Trace_line_list_2d_hex_ext = [""]*int(Sets)
 Sets_list = [""]*int(Sets)
 Cache_structure = list()
-
+Tests_list = list()
+n_bit_list = list()
+Tag_list = list()
+Index_list = list()
+Offset_list = list()
+n_bit_list_ext = list()
+Tag_list_ext = list()
+Index_list_ext = list()
+Offset_list_ext = list()
+Trace_line_list_2d_ext = [""]*int(Sets)
+Trace_line_dict_list = list()
 #Some Variable
 Index_count:int = 0
 
@@ -34,27 +46,25 @@ with open(fileinput, 'r') as f:
 # Following is the list() containing that will contain all the tag arrays in hex
 for i in range(len(Trace_line_list)):
     n_bit = int(Trace_line_list[i][0:1])
+    n_bit_list.append(n_bit)
     Trace_line_tag_array = Trace_line_list[i][2:]
     Trace_line_tag_array_bin = bin(int(Trace_line_tag_array, 16))[2:].zfill(32)
     Offset_bin = Trace_line_tag_array_bin[Tag_bits + Index_bits:]
     Index_bin = Trace_line_tag_array_bin[Tag_bits: Tag_bits + Index_bits]
     Tag_bin = Trace_line_tag_array_bin[0:Tag_bits]
     Offset = int(Offset_bin, 2)
+    Offset_list.append(Offset)
     Offset_hex = hex(int(Offset_bin, 2))[2:]
     Index = int(Index_bin, 2)
+    Index_list.append(Index)
     Index_hex = hex(int(Index_bin, 2))[2:]
     Tag = int(Tag_bin, 2)
+    Tag_list.append(Tag)
     Tag_hex = hex(int(Tag_bin, 2))[2:]
     Trace_line_list_2d.append([n_bit, Tag, Index, Offset])
     Trace_line_list_2d_hex.append([n_bit, Tag_hex, Index_hex, Offset_hex])
-
-
-#Cache Structure
-
-for index_count in range(len(Sets_list)):
-
-    Cache_structure.append([index_count, "LRU", "Way1", "Way2", "Way3", "Way4", "Way5", "Way6", "Way7", "Way8"])
+    Trace_line_dict_2d = {"Command": n_bit, "Tag": Tag, "Index": Index, "Offset": Offset}
+    Trace_line_dict_list.append(Trace_line_dict_2d)
 
 if arg == "N":
-    print(Cache_structure)
-
+    print(Trace_line_dict_list)
