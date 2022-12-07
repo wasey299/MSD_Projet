@@ -80,7 +80,10 @@ for trace_line in Trace_line_list_2d:
             if trace_line[0] == 0:
 
       # ------------------- Checking whether the Tag Hit in the way1.--------------------------------------------------------------------------------
-                    if trace_line[1] == cache_line[2]:
+                if trace_line[1] == cache_line[2]:
+
+         # ----------------------Check the state-------------------------------------------------------------------------------
+                     if cache_line[1] != "I":
 
                 #------------------- Updating MESI State on Hit--------------------------------------------------------------------------------
                         if cache_line[1] == "I":
@@ -106,6 +109,10 @@ for trace_line in Trace_line_list_2d:
       # ------------------- Checking whether the Tag Hit in the way2.--------------------------------------------------------------------------------
                     elif trace_line[1] == cache_line[4]:
 
+# ----------------------Check the state-------------------------------------------------------------------------------
+                      if cache_line[3] != "I":
+
+
     # ------------------- Updating MESI State on Hit--------------------------------------------------------------------------------
                         if cache_line[3] == "I":
                             cache_line[3] = "E"
@@ -130,6 +137,9 @@ for trace_line in Trace_line_list_2d:
       # ------------------- Checking whether the Tag Hit in the way3.--------------------------------------------------------------------------------
                     elif trace_line[1] == cache_line[6]:
 
+        # ----------------------Check the state-------------------------------------------------------------------------------
+                      if cache_line[5] != "I":
+
     # ------------------- Updating MESI State on Hit--------------------------------------------------------------------------------
                         if cache_line[5] == "I":
                             cache_line[5] = "E"
@@ -152,6 +162,9 @@ for trace_line in Trace_line_list_2d:
                         break
     #---------------------- Checking whether the Tag Hit in the way4.--------------------------------------------------------------------------------
                     elif trace_line[1] == cache_line[8]:
+
+     # ----------------------Check the state-------------------------------------------------------------------------------
+                      if cache_line[7] != "I":
 
         #------------------- Updating MESI state.--------------------------------------------------------------------------------
                         if cache_line[7] == "I":
@@ -178,6 +191,8 @@ for trace_line in Trace_line_list_2d:
 
     #-------------------Checking Tag hit in the way5------------------------------------------------------------------------------
                     elif trace_line[1] == cache_line[10]:
+        # ----------------------Check the state-------------------------------------------------------------------------------
+                      if cache_line[9] != "I":
 
        #------------------Updating MESI State-----------------------------------------------------------------------------
                         if cache_line[9] == "I":
@@ -204,6 +219,9 @@ for trace_line in Trace_line_list_2d:
     #-------------Checking Tag hit in way6-------------------------------------------------------------------------------
                     elif trace_line[1] == cache_line[12]:
 
+        # ----------------------Check the state-------------------------------------------------------------------------------
+                      if cache_line[11] != "I":
+
         #--------------------Updating MESI state-----------------------------------------------------------------------
                         if cache_line[11] == "I":
                             cache_line[11] = "E"
@@ -227,6 +245,9 @@ for trace_line in Trace_line_list_2d:
 
     #-----------------------Checking tag hit in the way7-----------------------------------------------------
                     elif trace_line[1] == cache_line[14]:
+
+      # ----------------------Check the state-------------------------------------------------------------------------------
+                      if cache_line[13] != "I":
 
         #---------------------------Updating MESI State-------------------------------------------------------------
                         if cache_line[13] == "I":
@@ -253,6 +274,9 @@ for trace_line in Trace_line_list_2d:
     #---------------------Checking Tag hit in the way8-----------------------------------------------------
                     elif trace_line[1] == cache_line[16]:
 
+        # ----------------------Check the state-------------------------------------------------------------------------------
+                      if cache_line[15] != "I":
+
         #----------------------Updating MESI State-------------------------------------------------------------------------
                         if cache_line[15] == "I":
                             cache_line[15] = "E"
@@ -272,7 +296,75 @@ for trace_line in Trace_line_list_2d:
                             print("Hit: Index = %d | Tag = %d | MESI State = %s" %(trace_line[2], trace_line[1], cache_line[15]))
 
                         break
-    #------------Tag Miss-----------------------------------------------------------------------------------------------
+    #------------Tag   Miss because every way is in INVALID state-----------------------------------------------------------------------------------------------
+                      elif cache_line[15] == "I":
+                          #Cache Miss
+        #---------Eviction of a line in this Index based on the PLRU replacement policy------------------------------------------------
+
+            #-----Complimenting all the PLRU bits-----------------------------------------------------------------------------------------
+                        if cache_line[17] == 0:
+                            cache_line[17] = 1
+                        elif cache_line[17] == 1:
+                            cache_line[17] = 0
+
+                        if cache_line[18] == 0:
+                            cache_line[18] = 1
+                        elif cache_line[18] == 1:
+                            cache_line[18] = 0
+
+                        if cache_line[19] == 0:
+                            cache_line[19] = 1
+                        elif cache_line[19] == 1:
+                            cache_line[19] = 0
+
+                        if cache_line[20] == 0:
+                            cache_line[20] = 1
+                        elif cache_line[20] == 1:
+                            cache_line[20] = 0
+
+                        if cache_line[21] == 0:
+                            cache_line[21] = 1
+                        elif cache_line[21] == 1:
+                            cache_line[21] = 0
+
+                        if cache_line[22] == 0:
+                            cache_line[22] = 1
+                        elif cache_line[22] == 1:
+                            cache_line[22] = 0
+
+                        if cache_line[23] == 0:
+                            cache_line[23] = 1
+                        elif cache_line[23] == 1:
+                            cache_line[23] = 0
+
+            #------Bracnch of PLRU bits replacing the PLRU way with the Address --------------------------------------------------------------------------------------------------
+                        if cache_line[17] == 0:
+                            if cache_line[18] == 0:
+                                  if cache_line[20] == 0:
+                                      cache_line[2] = trace_line[1]
+                                  elif cache_line[20] == 1:
+                                      cache_line[4] = trace_line[1]
+                            elif cache_line[18] == 1:
+                                  if cache_line[21] == 0:
+                                      cache_line[6] = trace_line[1]
+                                  elif cache_line[21] == 1:
+                                      cache_line[8] = trace_line[1]
+
+                        elif cache_line[17] == 1:
+                            if cache_line[19] == 0:
+                                    if cache_line[22] == 0:
+                                        cache_line[10] = trace_line[1]
+                                    if cache_line[22] == 1:
+                                        cache_line[12] = trace_line[1]
+                            elif cache_line[19] == 1:
+                                    if cache_line[23] == 0:
+                                        cache_line[14] = trace_line[1]
+                                    elif cache_line[23] == 1:
+                                        cache_line[16] == trace_line[1]
+
+
+
+      #------------Cahe Miss because failed to find any equal tag----------------------------------------------------
                     elif trace_line[1] != cache_line[16]:
 
         #---------Eviction of a line in this Index based on the PLRU replacement policy------------------------------------------------
@@ -337,3 +429,4 @@ for trace_line in Trace_line_list_2d:
                                         cache_line[14] = trace_line[1]
                                     elif cache_line[23] == 1:
                                         cache_line[16] == trace_line[1]
+
