@@ -35,8 +35,10 @@ Index_list_ext = list()
 Offset_list_ext = list()
 Trace_line_list_2d_ext = [""]*int(Sets)
 Trace_line_dict_list = list()
-#Some Variable
+#Instantiating of some count variables
 Index_count:int = 0
+Miss_count: int = 0
+Hit_count: int = 0
 
 #if arg =="N":
 with open(fileinput, 'r') as f:
@@ -72,6 +74,7 @@ for index_count in range(len(Sets_list)):
     Cache_structure.append([index_count, 0])
 
 
+
 for trace_line in Trace_line_list_2d:
     for cache_line in Cache_structure:
         if trace_line[2] == cache_line[0]: # Pointing towards the pointed set.
@@ -84,6 +87,7 @@ for trace_line in Trace_line_list_2d:
 
          # ----------------------Check the state-------------------------------------------------------------------------------
                      if cache_line[1] != "I":
+                         Hit_count = Hit_count + 1
 
                 #------------------- Updating MESI State on Hit--------------------------------------------------------------------------------
                         if cache_line[1] == "I":
@@ -111,7 +115,7 @@ for trace_line in Trace_line_list_2d:
 
 # ----------------------Check the state-------------------------------------------------------------------------------
                       if cache_line[3] != "I":
-
+                        Hit_count = Hit_count + 1
 
     # ------------------- Updating MESI State on Hit--------------------------------------------------------------------------------
                         if cache_line[3] == "I":
@@ -139,8 +143,9 @@ for trace_line in Trace_line_list_2d:
 
         # ----------------------Check the state-------------------------------------------------------------------------------
                       if cache_line[5] != "I":
+                        Hit_count = Hit_count + 1
 
-    # ------------------- Updating MESI State on Hit--------------------------------------------------------------------------------
+# ------------------- Updating MESI State on Hit--------------------------------------------------------------------------------
                         if cache_line[5] == "I":
                             cache_line[5] = "E"
                         elif cache_line[5] == "S":
@@ -165,8 +170,9 @@ for trace_line in Trace_line_list_2d:
 
      # ----------------------Check the state-------------------------------------------------------------------------------
                       if cache_line[7] != "I":
+                        Hit_count = Hit_count + 1
 
-        #------------------- Updating MESI state.--------------------------------------------------------------------------------
+#------------------- Updating MESI state.--------------------------------------------------------------------------------
                         if cache_line[7] == "I":
                             cache_line[7] = "E"
                         elif cache_line[7] == "S":
@@ -193,8 +199,9 @@ for trace_line in Trace_line_list_2d:
                     elif trace_line[1] == cache_line[10]:
         # ----------------------Check the state-------------------------------------------------------------------------------
                       if cache_line[9] != "I":
+                        Hit_count = Hit_count + 1
 
-       #------------------Updating MESI State-----------------------------------------------------------------------------
+#------------------Updating MESI State-----------------------------------------------------------------------------
                         if cache_line[9] == "I":
                             cache_line[9] = "E"
                         elif cache_line[9] == "S":
@@ -218,8 +225,10 @@ for trace_line in Trace_line_list_2d:
 
     #-------------Checking Tag hit in way6-------------------------------------------------------------------------------
                     elif trace_line[1] == cache_line[12]:
+                      Hit_count = Hit_count + 1
 
-        # ----------------------Check the state-------------------------------------------------------------------------------
+
+# ----------------------Check the state-------------------------------------------------------------------------------
                       if cache_line[11] != "I":
 
         #--------------------Updating MESI state-----------------------------------------------------------------------
@@ -248,8 +257,10 @@ for trace_line in Trace_line_list_2d:
 
       # ----------------------Check the state-------------------------------------------------------------------------------
                       if cache_line[13] != "I":
+                        Hit_count = Hit_count + 1
 
-        #---------------------------Updating MESI State-------------------------------------------------------------
+
+#---------------------------Updating MESI State-------------------------------------------------------------
                         if cache_line[13] == "I":
                             cache_line[13] = "E"
                         elif cache_line[13] == "S":
@@ -273,8 +284,10 @@ for trace_line in Trace_line_list_2d:
 
     #---------------------Checking Tag hit in the way8-----------------------------------------------------
                     elif trace_line[1] == cache_line[16]:
+                      Hit_count = Hit_count + 1
 
-        # ----------------------Check the state-------------------------------------------------------------------------------
+
+# ----------------------Check the state-------------------------------------------------------------------------------
                       if cache_line[15] != "I":
 
         #----------------------Updating MESI State-------------------------------------------------------------------------
@@ -298,6 +311,8 @@ for trace_line in Trace_line_list_2d:
                         break
     #------------Tag   Miss because every way is in INVALID state-----------------------------------------------------------------------------------------------
                       elif cache_line[15] == "I":
+                          Miss_count = Miss_count + 1
+
                           #Cache Miss
         #---------Eviction of a line in this Index based on the PLRU replacement policy------------------------------------------------
 
@@ -366,8 +381,10 @@ for trace_line in Trace_line_list_2d:
 
       #------------Cahe Miss because failed to find any equal tag----------------------------------------------------
                     elif trace_line[1] != cache_line[16]:
+                        Miss_count = Miss_count + 1
 
-        #---------Eviction of a line in this Index based on the PLRU replacement policy------------------------------------------------
+
+#---------Eviction of a line in this Index based on the PLRU replacement policy------------------------------------------------
 
             #-----Complimenting all the PLRU bits-----------------------------------------------------------------------------------------
                         if cache_line[17] == 0:
@@ -430,3 +447,12 @@ for trace_line in Trace_line_list_2d:
                                     elif cache_line[23] == 1:
                                         cache_line[16] == trace_line[1]
 
+
+
+
+
+
+
+# Calculation of Hit ratio and miss ratio--------------------
+Miss_count_ratio: float = Miss_count/(Hit_count + Miss_count)
+Hit_count_ratio: float = Hit_count/(Hit_count + Miss_count)
