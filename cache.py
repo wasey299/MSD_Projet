@@ -290,10 +290,53 @@ for trace_line in Trace_line_list_2d:
                                 elif cache_line[23] == 1:
                                     cache_line[16] == trace_line[1]
                             #---Print Evicted Way if Normal Mode--------------------------------------------------------
-                            print("/////////////////////////////////////////////////////////////////////////////")
-                            print("EVICTION")
-                            print("Tag: %h Index: %h" % (hex(trace_line[1]), hex(cache_line[0])))
-                            print("LRU bits: %d%d%d%d%d%d%d" % (cache_line[17], cache_line[18], cache_line[19], cache_line[20], cache_line[21], cache_line[22], cache_line[23]))
+                            if arg == "N":
+                                print("/////////////////////////////////////////////////////////////////////////////")
+                                print("EVICTION")
+                                print("Tag: %h Index: %h" % (hex(trace_line[1]), hex(cache_line[0])))
+                                print("LRU bits: %d%d%d%d%d%d%d" % (cache_line[17], cache_line[18], cache_line[19], cache_line[20], cache_line[21], cache_line[22], cache_line[23]))
+                if trace_line[1] != cache_line[16]:
+                    #Incrementing miss counter--------------------------------------------------------------------------
+                        Miss_count = Miss_count + 1
+                        #---Eviction Using PLRU policy------------------------------------------------------------------
+                        #---Complimenting PLRU Bits---------------------------------------------------------------------
+                        cache_line[17] = Compliment(17)
+                        cache_line[18] = Compliment(18)
+                        cache_line[19] = Compliment(19)
+                        cache_line[20] = Compliment(20)
+                        cache_line[21] = Compliment(21)
+                        cache_line[22] = Compliment(22)
+                        cache_line[23] = Compliment(23)
+                        #---Eviction------------------------------------------------------------------------------------
+                        if cache_line[17] == 0:
+                            if cache_line[18] == 0:
+                                if cache_line[20] == 0:
+                                    cache_line[2] = trace_line[1]
+                                elif cache_line[20] == 1:
+                                    cache_line[4] = trace_line[1]
+                            elif cache_line[18] == 1:
+                                if cache_line[21] == 0:
+                                    cache_line[6] = trace_line[1]
+                                elif cache_line[21] == 1:
+                                    cache_line[8] = trace_line[1]
+
+                        elif cache_line[17] == 1:
+                            if cache_line[19] == 0:
+                                if cache_line[22] == 0:
+                                    cache_line[10] = trace_line[1]
+                                if cache_line[22] == 1:
+                                    cache_line[12] = trace_line[1]
+                            elif cache_line[19] == 1:
+                                if cache_line[23] == 0:
+                                    cache_line[14] = trace_line[1]
+                                elif cache_line[23] == 1:
+                                    cache_line[16] == trace_line[1]
+                            #---Print Evicted Way if Normal Mode--------------------------------------------------------
+                            if arg == "N":
+                                print("/////////////////////////////////////////////////////////////////////////////")
+                                print("EVICTION")
+                                print("Tag: %h Index: %h" % (hex(trace_line[1]), hex(cache_line[0])))
+                                print("LRU bits: %d%d%d%d%d%d%d" % (cache_line[17], cache_line[18], cache_line[19], cache_line[20], cache_line[21], cache_line[22], cache_line[23]))
 
 
 
@@ -305,5 +348,4 @@ for trace_line in Trace_line_list_2d:
 
 
 
-if arg == "N":
-    pass
+
