@@ -41,6 +41,9 @@ Trace_line_dict_list = list()
 Index_count: int = 0
 Miss_count: int = 0
 Hit_count: int = 0
+Index_referenced_count: int = 0
+Index_not_referenced_count: int = 0
+debug1: int = 0
 
 #---Reading Trace File--------------------------------------------------------------------------------------------------
 with open(fileinput, 'r') as f:
@@ -75,7 +78,7 @@ if arg == "N":
 
 #---MESI State Class----------------------------------------------------------------------------------------------------
 def MESI(Command, State):
-    if Command == 0:
+    if Command == 0 or 2:
         if State == "M":
             return "M"
         if State == "E":
@@ -84,6 +87,17 @@ def MESI(Command, State):
             return "S"
         if State == "I":
             return "E"
+
+    if Command == 1:
+        if State == "M":
+            return "M"
+        if State == "E":
+            return "M"
+        if State == "S":
+            return "M"
+        if State == "I":
+            return "M"
+
 
 #---Compliment Class----------------------------------------------------------------------------------------------------
 def Compliment(bit):
@@ -94,291 +108,226 @@ def Compliment(bit):
 
 #---Cache Structure-----------------------------------------------------------------------------------------------------
 for index_count in range(int(Sets)):
-    Cache_structure.append([index_count, "I", 0, "I", 0, "I", 0, "I", 0, "I", 0, "I", 0, "I", 0, "I", 0, "x", "x", "x", "x", "x", "x", "x"])
+    Cache_structure.append([index_count, "I", 0, "I", 0, "I", 0, "I", 0, "I", 0, "I", 0, "I", 0, "I", 0, 0, 0, 0, 0, 0, 0, 0])
 #                                                                                                         L1   L2   L3   L4   L5   L6   L7
 #                                 0       1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16  17   18   19   20   21   22    23
 #                                         way1    way2    way3    way4    way5     way6    way7    way8
 
+#if arg == "N":
+#    for i in Cache_structure:
+#        print(i)
+
+
 #---Operations----------------------------------------------------------------------------------------------------------
 for trace_line in Trace_line_list_2d:
     for cache_line in Cache_structure:
+    #    debug1 = debug1 + 1
+
     #---Finding the index-----------------------------------------------------------------------------------------------
-            #---Command 0-----------------------------------------------------------------------------------------------
-                #---Checking the Tag hit in way1------------------------------------------------------------------------
-                if trace_line[2] == cache_line[0] and trace_line[1] == cache_line[2] and trace_line[0] == 0:
-                    #---Checking if the line is in a Valid State--------------------------------------------------------
-                    if cache_line[1] != "I":
-                        Hit_count = Hit_count + 1
-                        #---Updating MESI State on hit------------------------------------------------------------------
-                        cache_line[1] = MESI(trace_line[0], cache_line[1])
-                        #---Updating PLRU bits--------------------------------------------------------------------------
-                        cache_line[17] = 0
-                        cache_line[18] = 0
-                        cache_line[20] = 0
-                        #---Print if Normal Mode------------------------------------------------------------------------
-                        if arg == "N":
-                            print("/////////////////////////////////////////////////////////////////////////////")
-                            print("Tag: %h Hit at %h index and way 1" %(hex(trace_line[1]), hex(cache_line[0])))
-                            print("MESI State: %s" %(cache_line[1]))
-                            print("LRU bits: %d%d%d%d%d%d%d" %(cache_line[17], cache_line[18], cache_line[19], cache_line[20], cache_line[21], cache_line[22], cache_line[23]))
-                            break
-                        break
+      #---Command 0-----------------------------------------------------------------------------------------------
+         #---Checing Index match------------------------------------------------------------------------
+        if cache_line[0] == trace_line[2]:
+            Index_referenced_count = Index_referenced_count + 1
+            #---Checking whether the line is in Valid state for the way-----------------------------------------------------------------------
+            if cache_line[1] != "I":
+                if cache_line[2] == trace_line[1]:
+                    Hit_count = Hit_count + 1
+                    #---Updating MESI State on hit------------------------------------------------------------------
+                    cache_line[1] = MESI(trace_line[0], cache_line[1])
+                    #---Updating PLRU bits--------------------------------------------------------------------------
+                    cache_line[17] = 0
+                    cache_line[18] = 0
+                    cache_line[20] = 0
                     break
-
-                # ---Checking the Tag hit in way2-----------------------------------------------------------------------
-                elif trace_line[2] == cache_line[0] and trace_line[1] == cache_line[4] and trace_line[0] == 0:
-                    # ---Checking if the line is in a Valid State-------------------------------------------------------
-                    if cache_line[3] != "I":
-                        #---Incrementing Hit Counter--------------------------------------------------------------------
-                        Hit_count = Hit_count + 1
-                        # ---Updating MESI State on hit-----------------------------------------------------------------
-                        cache_line[3] = MESI(trace_line[0], cache_line[3])
-                        # ---Updating PLRU bits-------------------------------------------------------------------------
-                        cache_line[17] = 0
-                        cache_line[18] = 0
-                        cache_line[20] = 1
-                        # ---Print if Normal Mode-----------------------------------------------------------------------
-                        if arg == "N":
-                            print("/////////////////////////////////////////////////////////////////////////////")
-                            print("Tag: %h Hit at %h index and way 2" % (hex(trace_line[1]), hex(cache_line[0])))
-                            print("MESI State: %s" % (cache_line[3]))
-                            print("LRU bits: %d%d%d%d%d%d%d" % (cache_line[17], cache_line[18], cache_line[19], cache_line[20], cache_line[21], cache_line[22], cache_line[23]))
-                            break
-                        break
+            elif cache_line[3] != "I":                
+                if cache_line[4] == trace_line[1]:
+                    Hit_count = Hit_count + 1
+                    #---Updating MESI State on hit------------------------------------------------------------------
+                    cache_line[3] = MESI(trace_line[0], cache_line[3])
+                    #---Updating PLRU bits--------------------------------------------------------------------------
+                    cache_line[17] = 0
+                    cache_line[18] = 0
+                    cache_line[20] = 1
                     break
-
-                # ---Checking the Tag hit in way3-----------------------------------------------------------------------
-                elif trace_line[2] == cache_line[0] and trace_line[1] == cache_line[6] and trace_line[0] == 0:
-                    # ---Checking if the line is in a Valid State-------------------------------------------------------
-                    if cache_line[5] != "I":
-                        #---Incrementing Hit Counter--------------------------------------------------------------------
-                        Hit_count = Hit_count + 1
-                        # ---Updating MESI State on hit-----------------------------------------------------------------
-                        cache_line[5] = MESI(trace_line[0], cache_line[5])
-                        # ---Updating PLRU bits-------------------------------------------------------------------------
-                        cache_line[17] = 0
-                        cache_line[18] = 1
-                        cache_line[21] = 0
-                        # ---Print if Normal Mode-----------------------------------------------------------------------
-                        if arg == "N":
-                            print("/////////////////////////////////////////////////////////////////////////////")
-                            print("Tag: %h Hit at %h index and way 3" % (hex(trace_line[1]), hex(cache_line[0])))
-                            print("MESI State: %s" % (cache_line[5]))
-                            print("LRU bits: %d%d%d%d%d%d%d" % (cache_line[17], cache_line[18], cache_line[19], cache_line[20], cache_line[21], cache_line[22], cache_line[23]))
-                            break
-                        break
+            elif cache_line[5] != "I":                
+                if cache_line[6] == trace_line[1]:
+                    Hit_count = Hit_count + 1
+                    #---Updating MESI State on hit------------------------------------------------------------------
+                    cache_line[5] = MESI(trace_line[0], cache_line[5])
+                    #---Updating PLRU bits--------------------------------------------------------------------------
+                    cache_line[17] = 0
+                    cache_line[18] = 1
+                    cache_line[21] = 0
                     break
-
-                # ---Checking the Tag hit in way4-----------------------------------------------------------------------
-                elif trace_line[2] == cache_line[0] and trace_line[1] == cache_line[8] and trace_line[0] == 0:
-                    # ---Checking if the line is in a Valid State-------------------------------------------------------
-                    if cache_line[7] != "I":
-                        #---Incrementing Hit Counter--------------------------------------------------------------------
-                        Hit_count = Hit_count + 1
-                        # ---Updating MESI State on hit-----------------------------------------------------------------
-                        cache_line[7] = MESI(trace_line[0], cache_line[7])
-                        # ---Updating PLRU bits-------------------------------------------------------------------------
-                        cache_line[17] = 0
-                        cache_line[18] = 1
-                        cache_line[21] = 1
-                        # ---Print if Normal Mode-----------------------------------------------------------------------
-                        if arg == "N":
-                            print("/////////////////////////////////////////////////////////////////////////////")
-                            print("Tag: %h Hit at %h index and way 4" % (hex(trace_line[1]), hex(cache_line[0])))
-                            print("MESI State: %s" % (cache_line[7]))
-                            print("LRU bits: %d%d%d%d%d%d%d" % (cache_line[17], cache_line[18], cache_line[19], cache_line[20], cache_line[21], cache_line[22], cache_line[23]))
-                            break
-                        break
+            elif cache_line[7] != "I":                
+                if cache_line[8] == trace_line[1]:
+                    Hit_count = Hit_count + 1
+                    #---Updating MESI State on hit------------------------------------------------------------------
+                    cache_line[7] = MESI(trace_line[0], cache_line[7])
+                    #---Updating PLRU bits--------------------------------------------------------------------------
+                    cache_line[17] = 0
+                    cache_line[18] = 1
+                    cache_line[21] = 1
                     break
-
-                # ---Checking the Tag hit in way5-----------------------------------------------------------------------
-                elif trace_line[2] == cache_line[0] and trace_line[1] == cache_line[10] and trace_line[0] == 0:
-                    # ---Checking if the line is in a Valid State-------------------------------------------------------
-                    if cache_line[9] != "I":
-                        #---Incrementing Hit Counter--------------------------------------------------------------------
-                        Hit_count = Hit_count + 1
-                        # ---Updating MESI State on hit-----------------------------------------------------------------
-                        cache_line[9] = MESI(trace_line[0], cache_line[9])
-                        # ---Updating PLRU bits-------------------------------------------------------------------------
+            elif cache_line[9] != "I":                                
+                if cache_line[10] == trace_line[1]:
+                    Hit_count = Hit_count + 1
+                    #---Updating MESI State on hit------------------------------------------------------------------
+                    cache_line[9] = MESI(trace_line[0], cache_line[9])
+                    #---Updating PLRU bits--------------------------------------------------------------------------
+                    cache_line[17] = 1
+                    cache_line[19] = 0
+                    cache_line[22] = 0
+                    break
+            elif cache_line[11] != "I":                
+                if cache_line[12] == trace_line[1]:
+                    Hit_count = Hit_count + 1
+                    #---Updating MESI State on hit------------------------------------------------------------------
+                    cache_line[11] = MESI(trace_line[0], cache_line[11])
+                    #---Updating PLRU bits--------------------------------------------------------------------------
+                    cache_line[17] = 1
+                    cache_line[19] = 0
+                    cache_line[22] = 1
+                    break
+            elif cache_line[13] != "I":                                
+                if cache_line[14] == trace_line[1]:
+                    Hit_count = Hit_count + 1
+                    #---Updating MESI State on hit------------------------------------------------------------------
+                    cache_line[13] = MESI(trace_line[0], cache_line[13])
+                    #---Updating PLRU bits--------------------------------------------------------------------------
+                    cache_line[17] = 1
+                    cache_line[18] = 1
+                    cache_line[23] = 0
+                    break
+            elif cache_line[15] != "I":                                
+                if cache_line[16] == trace_line[1]:
+                    Hit_count = Hit_count + 1
+                    #---Updating MESI State on hit------------------------------------------------------------------
+                    cache_line[15] = MESI(trace_line[0], cache_line[15])
+                    #---Updating PLRU bits--------------------------------------------------------------------------
+                    cache_line[17] = 1
+                    cache_line[18] = 1
+                    cache_line[23] = 1
+                    break
+                else:
+                    Miss_count = Miss_count + 1
+                    #---Evicition-------------------------------------------------------                    
+                    if cache_line[17] == 0:
                         cache_line[17] = 1
-                        cache_line[19] = 0
-                        cache_line[22] = 0
-                        # ---Print if Normal Mode-----------------------------------------------------------------------
-                        if arg == "N":
-                            print("/////////////////////////////////////////////////////////////////////////////")
-                            print("Tag: %h Hit at %h index and way 5" % (hex(trace_line[1]), hex(cache_line[0])))
-                            print("MESI State: %s" % (cache_line[9]))
-                            print("LRU bits: %d%d%d%d%d%d%d" % (cache_line[17], cache_line[18], cache_line[19], cache_line[20], cache_line[21], cache_line[22], cache_line[23]))
-                            break
-                        break
-                    break
-
-                # ---Checking the Tag hit in way6-----------------------------------------------------------------------
-                elif trace_line[2] == cache_line[0] and trace_line[1] == cache_line[12] and trace_line[0] == 0:
-                    # ---Checking if the line is in a Valid State-------------------------------------------------------
-                    if cache_line[11] != "I":
-                        #---Incrementing Hit Counter--------------------------------------------------------------------
-                        Hit_count = Hit_count + 1
-                        # ---Updating MESI State on hit-----------------------------------------------------------------
-                        cache_line[11] = MESI(trace_line[0], cache_line[11])
-                        # ---Updating PLRU bits-------------------------------------------------------------------------
-                        cache_line[17] = 1
-                        cache_line[19] = 0
-                        cache_line[22] = 1
-                        # ---Print if Normal Mode-----------------------------------------------------------------------
-                        if arg == "N":
-                            print("/////////////////////////////////////////////////////////////////////////////")
-                            print("Tag: %h Hit at %h index and way 6" % (hex(trace_line[1]), hex(cache_line[0])))
-                            print("MESI State: %s" % (cache_line[11]))
-                            print("LRU bits: %d%d%d%d%d%d%d" % (cache_line[17], cache_line[18], cache_line[19], cache_line[20], cache_line[21], cache_line[22], cache_line[23]))
-                            break
-                        break
-                    break
-
-                # ---Checking the Tag hit in way7-----------------------------------------------------------------------
-                elif trace_line[2] == cache_line[0] and trace_line[1] == cache_line[14] and trace_line[0] == 0:
-                    # ---Checking if the line is in a Valid State-------------------------------------------------------
-                    if cache_line[13] != "I":
-                        #---Incrementing Hit Counter--------------------------------------------------------------------
-                        Hit_count = Hit_count + 1
-                        # ---Updating MESI State on hit-----------------------------------------------------------------
-                        cache_line[13] = MESI(trace_line[0], cache_line[13])
-                        # ---Updating PLRU bits-------------------------------------------------------------------------
-                        cache_line[17] = 1
-                        cache_line[19] = 1
-                        cache_line[23] = 0
-                        # ---Print if Normal Mode-----------------------------------------------------------------------
-                        if arg == "N":
-                            print("/////////////////////////////////////////////////////////////////////////////")
-                            print("Tag: %h Hit at %h index and way 1" % (hex(trace_line[1]), hex(cache_line[0])))
-                            print("MESI State: %s" % (cache_line[13]))
-                            print("LRU bits: %d%d%d%d%d%d%d" % (cache_line[17], cache_line[18], cache_line[19], cache_line[20], cache_line[21], cache_line[22], cache_line[23]))
-                            break
-                        break
-                    break
-
-                # ---Checking the Tag hit in way8-----------------------------------------------------------------------
-                elif trace_line[2] == cache_line[0] and trace_line[1] == cache_line[16] and trace_line[0] == 0:
-                    # ---Checking if the line is in a Valid State-------------------------------------------------------
-                    if cache_line[15] != "I":
-                        #---Incrementing Hit Counter--------------------------------------------------------------------
-                        Hit_count = Hit_count + 1
-                        # ---Updating MESI State on hit-----------------------------------------------------------------
-                        cache_line[15] = MESI(trace_line[0], cache_line[15])
-                        # ---Updating PLRU bits-------------------------------------------------------------------------
-                        cache_line[17] = 1
-                        cache_line[19] = 1
-                        cache_line[23] = 1
-                        # ---Print if Normal Mode-----------------------------------------------------------------------
-                        if arg == "N":
-                            print("/////////////////////////////////////////////////////////////////////////////")
-                            print("Tag: %h Hit at %h index and way 1" % (hex(trace_line[1]), hex(cache_line[0])))
-                            print("MESI State: %s" % (cache_line[15]))
-                            print("LRU bits: %d%d%d%d%d%d%d" % (cache_line[17], cache_line[18], cache_line[19], cache_line[20], cache_line[21], cache_line[22], cache_line[23]))
-                            break
-                        break
-
-
-                    #---Tag miss because all the ways are invalid-------------------------------------------------------
-                    elif cache_line[15] == "I":
-                    #Incrementing miss counter--------------------------------------------------------------------------
-                        Miss_count = Miss_count + 1
-                        #---Eviction Using PLRU policy------------------------------------------------------------------
-                        #---Complimenting PLRU Bits---------------------------------------------------------------------
-                        cache_line[17] = Compliment(cache_line[17])
-                        cache_line[18] = Compliment(cache_line[18])
-                        cache_line[19] = Compliment(cache_line[19])
-                        cache_line[20] = Compliment(cache_line[20])
-                        cache_line[21] = Compliment(cache_line[21])
-                        cache_line[22] = Compliment(cache_line[22])
-                        cache_line[23] = Compliment(cache_line[23])
-                        #---Eviction------------------------------------------------------------------------------------
-                        if cache_line[17] == 0:
-                            if cache_line[18] == 0:
-                                if cache_line[20] == 0:
-                                    cache_line[2] = trace_line[1]
-                                elif cache_line[20] == 1:
-                                    cache_line[4] = trace_line[1]
-                            elif cache_line[18] == 1:
-                                if cache_line[21] == 0:
-                                    cache_line[6] = trace_line[1]
-                                elif cache_line[21] == 1:
-                                    cache_line[8] = trace_line[1]
-
-                        elif cache_line[17] == 1:
-                            if cache_line[19] == 0:
-                                if cache_line[22] == 0:
-                                    cache_line[10] = trace_line[1]
-                                if cache_line[22] == 1:
-                                    cache_line[12] = trace_line[1]
-                            elif cache_line[19] == 1:
-                                if cache_line[23] == 0:
-                                    cache_line[14] = trace_line[1]
-                                elif cache_line[23] == 1:
-                                    cache_line[16] == trace_line[1]
-                            #---Print Evicted Way if Normal Mode--------------------------------------------------------
-                            if arg == "N":
-                                print("/////////////////////////////////////////////////////////////////////////////")
-                                print("EVICTION")
-                                print("Tag: %h Index: %h" % (hex(trace_line[1]), hex(cache_line[0])))
-                                print("LRU bits: %d%d%d%d%d%d%d" % (cache_line[17], cache_line[18], cache_line[19], cache_line[20], cache_line[21], cache_line[22], cache_line[23]))
+                        if cache_line[19] == 0:
+                            cache_line[19] = 1
+                            if cache_line[23] == 0:
+                                cache_line[23] =1
+                                cache_line[16] = trace_line[1]
+                                cache_line[15] = MESI(trace_line[0], cache_line[15])
+                            elif cache_line[23] == 1:
+                                cache_line[23] = 0
+                                cache_line[14] = trace_line[1]
+                                cache_line[13] = MESI(trace_line[0], cache_line[13])
+                        elif cache_line[19] == 1:
+                            cache_line[19] = 0
+                            if cache_line[22] == 0:
+                                cache_line[22] = 1
+                                cache_line[12] = trace_line[1]
+                                cache_line[11] = MESI(trace_line[0], cache_line[11])
+                            elif cache_line[22] == 1:
+                                cache_line[22] = 0
+                                cache_line[10] = trace_line[1]
+                                cache_line[9] = MESI(trace_line[0], cache_line[9])
                                 break
-                            break
-                        break
-                elif trace_line[2] == cache_line[0] and trace_line[1] == cache_line[16] and trace_line[0] != 0:
-                    #Incrementing miss counter--------------------------------------------------------------------------
-                        Miss_count = Miss_count + 1
-                        #---Eviction Using PLRU policy------------------------------------------------------------------
-                        #---Complimenting PLRU Bits---------------------------------------------------------------------
-                        cache_line[17] = Compliment(cache_line[17])
-                        cache_line[18] = Compliment(cache_line[18])
-                        cache_line[19] = Compliment(cache_line[19])
-                        cache_line[20] = Compliment(cache_line[20])
-                        cache_line[21] = Compliment(cache_line[21])
-                        cache_line[22] = Compliment(cache_line[22])
-                        cache_line[23] = Compliment(cache_line[23])
-                        #---Eviction------------------------------------------------------------------------------------
-                        if cache_line[17] == 0:
-                            if cache_line[18] == 0:
-                                if cache_line[20] == 0:
-                                    cache_line[2] = trace_line[1]
-                                elif cache_line[20] == 1:
-                                    cache_line[4] = trace_line[1]
-                            elif cache_line[18] == 1:
-                                if cache_line[21] == 0:
-                                    cache_line[6] = trace_line[1]
-                                elif cache_line[21] == 1:
-                                    cache_line[8] = trace_line[1]
-
-                        elif cache_line[17] == 1:
-                            if cache_line[19] == 0:
-                                if cache_line[22] == 0:
-                                    cache_line[10] = trace_line[1]
-                                if cache_line[22] == 1:
-                                    cache_line[12] = trace_line[1]
-                            elif cache_line[19] == 1:
-                                if cache_line[23] == 0:
-                                    cache_line[14] = trace_line[1]
-                                elif cache_line[23] == 1:
-                                    cache_line[16] == trace_line[1]
-                            #---Print Evicted Way if Normal Mode--------------------------------------------------------
-                            if arg == "N":
-                                print("/////////////////////////////////////////////////////////////////////////////")
-                                print("EVICTION")
-                                print("Tag: %h Index: %h" % (hex(trace_line[1]), hex(cache_line[0])))
-                                print("LRU bits: %d%d%d%d%d%d%d" % (cache_line[17], cache_line[18], cache_line[19], cache_line[20], cache_line[21], cache_line[22], cache_line[23]))
+                                    
+                    elif cache_line[17] == 1:
+                        cache_line[17] = 0
+                        if cache_line[18] == 0:
+                            cache_line[18] = 1
+                            if cache_line[21] == 0:
+                                cache_line[21] =1
+                                cache_line[8] = trace_line[1]
+                                cache_line[7] = MESI(trace_line[0], cache_line[7])
+                            elif cache_line[21] == 1:
+                                cache_line[21] = 0
+                                cache_line[6] = trace_line[1]
+                                cache_line[5] = MESI(trace_line[0], cache_line[5])
+                        elif cache_line[18] == 1:
+                            cache_line[18] = 0
+                            if cache_line[20] == 0:
+                                cache_line[20] = 1
+                                cache_line[4] = trace_line[1]
+                                cache_line[3] = MESI(trace_line[0], cache_line[3])
+                            elif cache_line[20] == 1:
+                                cache_line[20] = 0
+                                cache_line[2] = trace_line[1]
+                                cache_line[1] = MESI(trace_line[0], cache_line[1])
                                 break
-                            break
-                        break
+            
+            else:
+                Miss_count = Miss_count + 1
+                if cache_line[17] == 0:
+                    cache_line[17] = 1
+                    if cache_line[19] == 0:
+                        cache_line[19] = 1
+                        if cache_line[23] == 0:
+                            cache_line[23] =1
+                            cache_line[16] = trace_line[1]
+                            cache_line[15] = MESI(trace_line[0], cache_line[15])
+                        elif cache_line[23] == 1:
+                            cache_line[23] = 0
+                            cache_line[14] = trace_line[1]
+                            cache_line[13] = MESI(trace_line[0], cache_line[13])
+                    elif cache_line[19] == 1:
+                        cache_line[19] = 0
+                        if cache_line[22] == 0:
+                            cache_line[22] = 1
+                            cache_line[12] = trace_line[1]
+                            cache_line[11] = MESI(trace_line[0], cache_line[11])
+                        elif cache_line[22] == 1:
+                            cache_line[22] = 0
+                            cache_line[10] = trace_line[1]
+                            cache_line[9] = MESI(trace_line[0], cache_line[9])
+                            continue
+                                    
+                elif cache_line[17] == 1:
+                    cache_line[17] = 0
+                    if cache_line[18] == 0:
+                        cache_line[18] = 1
+                        if cache_line[21] == 0:
+                            cache_line[21] =1
+                            cache_line[8] = trace_line[1]
+                            cache_line[7] = MESI(trace_line[0], cache_line[7])
+                        elif cache_line[21] == 1:
+                            cache_line[21] = 0
+                            cache_line[6] = trace_line[1]
+                            cache_line[5] = MESI(trace_line[0], cache_line[5])
+                    elif cache_line[18] == 1:
+                        cache_line[18] = 0
+                        if cache_line[20] == 0:
+                            cache_line[20] = 1
+                            cache_line[4] = trace_line[1]
+                            cache_line[3] = MESI(trace_line[0], cache_line[3])
+                        elif cache_line[20] == 1:
+                            cache_line[20] = 0
+                            cache_line[2] = trace_line[1]
+                            cache_line[1] = MESI(trace_line[0], cache_line[1])
+                            continue
+                                
 
+                    
+        else:
+            Index_not_referenced_count = Index_not_referenced_count + 1
+            continue
+            
 
+if arg == "D":
+    print(Index_referenced_count)
+    print(Index_not_referenced_count)
+    print(debug1)
+    print(Cache_structure[2])
+    print(Cache_structure[4])
+    print(Cache_structure[6])
+    print(Cache_structure[31])
+    print(Cache_structure[2])
 
-
-
-
-
-
-
-
-
-
+    
+if arg == "S":
+    print(Hit_count)
+    print(Miss_count)
