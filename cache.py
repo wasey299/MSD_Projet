@@ -81,23 +81,83 @@ def MESI(Command, State):
     if Command == 0 or 2:
         if State == "M":
             return "M"
-        if State == "E":
+        elif State == "E":
             return "E"
-        if State == "S":
+        elif State == "S":
             return "S"
-        if State == "I":
+        elif State == "I":
             return "E"
 
     if Command == 1:
         if State == "M":
             return "M"
-        if State == "E":
+        elif State == "E":
             return "M"
-        if State == "S":
+        elif State == "S":
             return "M"
-        if State == "I":
+        elif State == "I":
             return "M"
 
+#---Snooping class------------------------------------------------------------------------------------------------------
+def Snooping(Command, State, Index, Tag, way, Address):
+    trc: str
+
+    trace_line1 = bin(int(Address[1], 10))[2:].zfill(11)
+    trace_line2 = bin(int(Address[2], 10))[2:].zfill(15)
+    trace_line3 = bin(int(Address[3], 10))[2:].zfill(6)
+    trace_line3_2 = int(trace_line3[4:], 2)
+
+    if trace_line3_2 == 0:
+        trc == "HIT"
+    if trace_line3_2 == 1:
+        trc == "HITM"
+    if trace_line3_2 == 2 or 3:
+        trc == "NOHIT"
+    trace_line_main = str(trace_line1) + str(trace_line2) + str("000000")
+
+
+    if Command == 4:
+        if State == "M":
+            print("===================SNOOP RESULT===================")
+            print("HITM at Set: %h, Tag: %h, and Way: %s" % (hex(Index), hex(Tag), way))
+            print("GETLINE: %s" % (str(hex(Index)))+way)
+            print("WRITE %s, %s" %(trace_line_main+trc))
+            print("Message to L2 cache")
+            print("INVALIDATE Set: %h and Way: %s"%(hex(Index), way))
+            return "S"
+
+        elif State == "E":
+            print("===================SNOOP RESULT===================")
+            print("HIT at Set: %d, Tag: %h, and Way: %s" % (Index, hex(Tag), way))
+            return "S"
+
+        elif State == "S":
+            print("===================SNOOP RESULT===================")
+            print("HIT at Set: %d, Tag: %h, and Way: %s" % (Index, hex(Tag), way))
+            return "S"
+
+    elif Command == 3:
+        if State == "S":
+            print("===================SNOOP RESULT===================")
+            print("INVALIDATE Set: %h and Way: %s"%(hex(Index), way))
+            print("HIT at Set: %d, Tag: %h, and Way: %s" % (Index, hex(Tag), way))
+            return "I"
+
+    elif Command == 6:
+        if State == "M":
+            print("===================SNOOP RESULT===================")
+            print("INVALIDATE Set: %h and Way: %s"%(hex(Index), way))
+            print("INVALIDATE Set: %h and Way: %s" % (hex(Index), way))
+            print("WRITE %s, %s" % (trace_line_main + trc))
+            return "I"
+        elif State == "E":
+            print("===================SNOOP RESULT===================")
+            print("INVALIDATE Set: %h and Way: %s"%(hex(Index), way))
+            return "I"
+        if State == "S":
+            print("===================SNOOP RESULT===================")
+            print("INVALIDATE Set: %h and Way: %s"%(hex(Index), way))
+            pass
 
 #---Compliment Class----------------------------------------------------------------------------------------------------
 def Compliment(bit):
@@ -124,7 +184,6 @@ for trace_line in Trace_line_list_2d:
     #    debug1 = debug1 + 1
 
     #---Finding the index-----------------------------------------------------------------------------------------------
-      #---Command 0-----------------------------------------------------------------------------------------------
          #---Checing Index match------------------------------------------------------------------------
         if cache_line[0] == trace_line[2]:
             Index_referenced_count = Index_referenced_count + 1
@@ -134,6 +193,8 @@ for trace_line in Trace_line_list_2d:
                     Hit_count = Hit_count + 1
                     #---Updating MESI State on hit------------------------------------------------------------------
                     cache_line[1] = MESI(trace_line[0], cache_line[1])
+                    #---Bus Snoop-----------------------------------------------------------------------------------
+                    Snooping(trace_line[0], cache_line[1], cache_line[0], trace_line[1], "Way1", Address)
                     #---Updating PLRU bits--------------------------------------------------------------------------
                     cache_line[17] = 0
                     cache_line[18] = 0
@@ -209,82 +270,37 @@ for trace_line in Trace_line_list_2d:
                     cache_line[18] = 1
                     cache_line[23] = 1
                     break
-                else:
-                    Miss_count = Miss_count + 1
-                    #---Evicition-------------------------------------------------------                    
-                    if cache_line[17] == 0:
-                        cache_line[17] = 1
-                        if cache_line[19] == 0:
-                            cache_line[19] = 1
-                            if cache_line[23] == 0:
-                                cache_line[23] =1
-                                cache_line[16] = trace_line[1]
-                                cache_line[15] = MESI(trace_line[0], cache_line[15])
-                            elif cache_line[23] == 1:
-                                cache_line[23] = 0
-                                cache_line[14] = trace_line[1]
-                                cache_line[13] = MESI(trace_line[0], cache_line[13])
-                        elif cache_line[19] == 1:
-                            cache_line[19] = 0
-                            if cache_line[22] == 0:
-                                cache_line[22] = 1
-                                cache_line[12] = trace_line[1]
-                                cache_line[11] = MESI(trace_line[0], cache_line[11])
-                            elif cache_line[22] == 1:
-                                cache_line[22] = 0
-                                cache_line[10] = trace_line[1]
-                                cache_line[9] = MESI(trace_line[0], cache_line[9])
-                                break
-                                    
-                    elif cache_line[17] == 1:
-                        cache_line[17] = 0
-                        if cache_line[18] == 0:
-                            cache_line[18] = 1
-                            if cache_line[21] == 0:
-                                cache_line[21] =1
-                                cache_line[8] = trace_line[1]
-                                cache_line[7] = MESI(trace_line[0], cache_line[7])
-                            elif cache_line[21] == 1:
-                                cache_line[21] = 0
-                                cache_line[6] = trace_line[1]
-                                cache_line[5] = MESI(trace_line[0], cache_line[5])
-                        elif cache_line[18] == 1:
-                            cache_line[18] = 0
-                            if cache_line[20] == 0:
-                                cache_line[20] = 1
-                                cache_line[4] = trace_line[1]
-                                cache_line[3] = MESI(trace_line[0], cache_line[3])
-                            elif cache_line[20] == 1:
-                                cache_line[20] = 0
-                                cache_line[2] = trace_line[1]
-                                cache_line[1] = MESI(trace_line[0], cache_line[1])
-                                break
-            
             else:
                 Miss_count = Miss_count + 1
-                if cache_line[17] == 0:
+                if cache_line[17] and cache_line[18] and cache_line[19] and cache_line[20] and cache_line[21] and cache_line[22] and cache_line[23] == 0:
+                    cache_line[2] = trace_line[1]
+                    break
+                elif cache_line[17] == 0:
                     cache_line[17] = 1
                     if cache_line[19] == 0:
                         cache_line[19] = 1
                         if cache_line[23] == 0:
-                            cache_line[23] =1
+                            cache_line[23] = 1
                             cache_line[16] = trace_line[1]
                             cache_line[15] = MESI(trace_line[0], cache_line[15])
+                            break
                         elif cache_line[23] == 1:
                             cache_line[23] = 0
                             cache_line[14] = trace_line[1]
                             cache_line[13] = MESI(trace_line[0], cache_line[13])
+                            break
                     elif cache_line[19] == 1:
                         cache_line[19] = 0
                         if cache_line[22] == 0:
                             cache_line[22] = 1
                             cache_line[12] = trace_line[1]
                             cache_line[11] = MESI(trace_line[0], cache_line[11])
+                            break
                         elif cache_line[22] == 1:
                             cache_line[22] = 0
                             cache_line[10] = trace_line[1]
                             cache_line[9] = MESI(trace_line[0], cache_line[9])
-                            continue
+                            break
                                     
                 elif cache_line[17] == 1:
                     cache_line[17] = 0
@@ -294,24 +310,25 @@ for trace_line in Trace_line_list_2d:
                             cache_line[21] =1
                             cache_line[8] = trace_line[1]
                             cache_line[7] = MESI(trace_line[0], cache_line[7])
+                            break
                         elif cache_line[21] == 1:
                             cache_line[21] = 0
                             cache_line[6] = trace_line[1]
                             cache_line[5] = MESI(trace_line[0], cache_line[5])
+                            break
                     elif cache_line[18] == 1:
                         cache_line[18] = 0
                         if cache_line[20] == 0:
                             cache_line[20] = 1
                             cache_line[4] = trace_line[1]
                             cache_line[3] = MESI(trace_line[0], cache_line[3])
+                            break
                         elif cache_line[20] == 1:
                             cache_line[20] = 0
                             cache_line[2] = trace_line[1]
                             cache_line[1] = MESI(trace_line[0], cache_line[1])
-                            continue
-                                
+                            break
 
-                    
         else:
             Index_not_referenced_count = Index_not_referenced_count + 1
             continue
